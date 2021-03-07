@@ -13,21 +13,47 @@ end
 
 module App
   class Files < SubCommandBase
-    desc "list <path>", "list files in path"
+    desc "list <path>", "list files in path. what formats can we accept?"
     def list(path)
       # list
       puts "listing files in path: #{path}"
+      puts Dir[path]
     end
 
-    desc "sanitize", "sanitize files"
-    def sanitize
+    desc "sanitize", "sanitize filenames"
+    def sanitize(path)
+      # allowed_characters: a-zA-Z0-9_-.
       # sanitize
     end
   end
 
+  class Manifest < SubCommandBase
+    desc "list <path>", "list files in path"
+    def list(path)
+      # list
+      # list all CSV files?
+      puts "listing CSV files in path: #{path}"
+    end
+
+    desc "validate", "validate manifest format and filenames/existence"
+    def validate(csv_path)
+      # allowed_characters: a-zA-Z0-9_-.
+      # validate
+    end
+
+    desc "create", "create new manifest"
+    # TODO: figure out what fields we need for this
+    def create(csv_path)
+      # create
+    end
+  end
+
+
   class CLI < Thor
     desc "files", "list and sanitize files"
     subcommand "files", Files
+    desc "manifest", "list, create, and validate manifests"
+    subcommand "manifest", Manifest
   end
 end
 
