@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 require "thor"
+require 'fileutils'
 
 class SubCommandBase < Thor
   def self.banner(command, namespace = nil, subcommand = false)
@@ -14,16 +15,33 @@ end
 module App
   class Files < SubCommandBase
     desc "list <path>", "list files in path. what formats can we accept?"
+    #options :path => :array
     def list(path)
       # list
       puts "listing files in path: #{path}"
-      puts Dir[path]
+      puts Dir[path].each { |file| puts file }
     end
 
     desc "sanitize", "sanitize filenames"
     def sanitize(path)
       # allowed_characters: a-zA-Z0-9_-.
       # sanitize
+      puts "sanitizing filenames in path: #{path}"
+      puts Dir[path].each { |old_file|
+        puts "old_file #{old_file}"
+        if /^[a-zA-Z0-9_\-.\/]+$/.match(old_file)
+         puts "VALID FILENAMNE"
+        else
+         puts "INVALID FILESNAMEAS!"
+         new_file = old_file.gsub(/[^a-zA-Z0-9_\-.\/]+/, '_')
+         puts "new_file #{new_file}"
+         if File.file? new_file 
+           puts "WARNING: file with new filename #{new_file} exists! overwriting it, possibly"
+         end
+         FileUtils.mv(old_file, new_file)
+
+        end
+      }
     end
   end
 
