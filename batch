@@ -67,10 +67,13 @@ module App
     # sfx_batch01_100,archivist1@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
     # 
     #
-    def create(csv_path)
-      title = "Item01 with 100 sections"
-      files_path = "content100_1/*.wav"
-      batch_name = "sfx_batch100_1"
+    options :sections => :numeric
+    def create()
+      section_size = options[:sections] 
+      STDERR.puts "Section size #{section_size}"
+      title = "SFX with #{section_size} sections"
+      files_path = "wayzata_wav_all/*.wav"
+      batch_name = "sfx_batch_#{section_size}_sections"
       email = "archivist1@example.com"
       #metadata_row = "batch_name,email"
       # create
@@ -81,7 +84,7 @@ module App
       file_rows.push( title )
       file_columns.push("Date Issued")
       file_rows.push( date_issued )
-      STDERR.puts Dir[files_path].each { |file| 
+      STDERR.puts Dir[files_path].each_with_index { |file,index|
         label = File.basename( file, ".*" ).capitalize
         #file_rows.push( [ title, date_issued, file ] )
         file_rows.push( file )
@@ -89,6 +92,8 @@ module App
         STDERR.puts "file_rows #{file_rows}"
         file_columns.push("File")
         file_columns.push("Label")
+        STDERR.puts "file #{file}, index #{index}"
+        break if index >= section_size
       }
       csv_string = CSV.generate do |csv|
         csv << [ batch_name, email ].fill(nil, 3...file_columns.count())
