@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 require "thor"
 require 'fileutils'
+require 'csv'
 
 class SubCommandBase < Thor
   def self.banner(command, namespace = nil, subcommand = false)
@@ -61,8 +62,53 @@ module App
 
     desc "create", "create new manifest"
     # TODO: figure out what fields we need for this
+    # metadata row
+    #
+    # sfx_batch01_100,archivist1@example.com,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,
+    # 
+    #
     def create(csv_path)
+      title = "Item00 with sections"
+      files_path = "files/*.wav"
+      batch_name = "sfx_batch04_5"
+      email = "archivist1@example.com"
+      #metadata_row = "batch_name,email"
       # create
+      file_rows = []
+      file_columns = []
+      date_issued = "2021-03-07"
+      file_columns.push("Title")
+      file_rows.push( title )
+      file_columns.push("Date Issued")
+      file_rows.push( date_issued )
+      STDERR.puts Dir[files_path].each { |file| 
+        label = File.basename( file, ".*" ).capitalize
+        #file_rows.push( [ title, date_issued, file ] )
+        file_rows.push( file )
+        file_rows.push( label )
+        STDERR.puts "file_rows #{file_rows}"
+        file_columns.push("File")
+        file_columns.push("Label")
+      }
+      csv_string = CSV.generate do |csv|
+        csv << [ batch_name, email ].fill(nil, 3...file_columns.count())
+        csv << file_columns
+        #csv << [ "Date Issued", "Label", "File" ]
+        csv << file_rows
+        #file_rows.each { |row|
+        #  csv << row
+        #}
+
+
+      end
+      puts csv_string
+
+      csv_string.each_line do |line|
+        STDERR.puts "Number of commas on this line: #{line.count(',')}"
+
+      end
+      #puts csv;
+
     end
   end
 
