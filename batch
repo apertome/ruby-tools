@@ -68,9 +68,9 @@ module App
     # 
     #
     def create(csv_path)
-      title = "Item00 with sections"
-      files_path = "files/*.wav"
-      batch_name = "sfx_batch04_5"
+      title = "Item01 with 100 sections"
+      files_path = "content100_1/*.wav"
+      batch_name = "sfx_batch100_1"
       email = "archivist1@example.com"
       #metadata_row = "batch_name,email"
       # create
